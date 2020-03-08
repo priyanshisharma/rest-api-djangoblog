@@ -1,4 +1,4 @@
-# learning-rest-api-django
+# rest-api-djangoblog
 
 REST APIs have been created in a blog similar to https://github.com/priyanshisharma/DjangoBlogProject
 

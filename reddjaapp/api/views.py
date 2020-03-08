@@ -3,9 +3,14 @@ from rest_framework.generics import (
     RetrieveAPIView,
     DestroyAPIView,
     UpdateAPIView,
+    CreateAPIView
 )
 from reddjaapp.models import Post,Comment
 from .serializers import PostSerializer
+
+class CreatePostAPIView(CreateAPIView):
+    queryset = Post.objects.all()
+    serializer_class = PostSerializer
 
 class PostListAPIView(ListAPIView):
     queryset = Post.objects.all()

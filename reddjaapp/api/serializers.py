@@ -5,4 +5,4 @@ from reddjaapp.models import Post
 class PostSerializer(serializers.ModelSerializer):
     class Meta:
         model = Post
-        fields = ['title','text','create_date','published_date']
+        fields = ['author','title','text','create_date','published_date']

@@ -7,7 +7,85 @@ from rest_framework.generics import (
 )
 from blog.models import Post
 from .serializers import PostSerializer
+from django.http import JsonResponse , HttpResponse
+from django.views.decorators.csrf import csrf_exempt
+from rest_framework.parsers import JSONParser
+from rest_framework.response import Response
+from rest_framework.decorators import api_view
+from rest_framework import status
 
+@csrf_exempt
+def list(request):
+    if request.method == 'GET':
+        queryset = Post.objects.all()
+        serializer = PostSerializer(queryset,many=True)
+        return JsonResponse(serializer.data , safe=False)
+
+    elif request.method == 'POST':
+        data = JSONParser().parse(request)
+        serializer = PostSerializer(data=data)
+        if serializer.is_valid():
+            serializer.save()
+            return JsonResponse(serializer.data, status=201)
+        return JsonResponse(serializer.errors, status=400)
+
+
+@api_view(['GET', 'PUT', 'DELETE'])
+def post_detail(request, pk):
+    """
+    Retrieve, update or delete a code snippet.
+    """
+    try:
+        post = Post.objects.get(pk=pk)
+    except Post.DoesNotExist:
+        return Response(status=status.HTTP_404_NOT_FOUND)
+
+    if request.method == 'GET':
+        serializer = PostSerializer(post)
+        return Response(serializer.data)
+
+    elif request.method == 'PUT':
+        serializer = PostSerializer(post, data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    elif request.method == 'DELETE':
+        post.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+
+"""
+@csrf_exempt
+def post_detail(request, pk):
+"""
+    #Retrieve, update or delete a code snippet.
+   
+"""
+    try:
+        post = Post.objects.get(pk=pk)
+    except Post.DoesNotExist:
+        return HttpResponse(status=404)
+
+    if request.method == 'GET':
+        serializer = PostSerializer(post)
+        return JsonResponse(serializer.data)
+
+    elif request.method == 'PUT':
+        data = JSONParser().parse(request)
+        serializer = SnippetSerializer(post, data=data)
+        if serializer.is_valid():
+            serializer.save()
+            return JsonResponse(serializer.data)
+        return JsonResponse(serializer.errors, status=400)
+
+    elif request.method == 'DELETE':
+        post.delete()
+        return HttpResponse(status=204)
+"""
+"""
 class CreatePostAPIView(CreateAPIView):
     queryset = Post.objects.all()
     serializer_class = PostSerializer
@@ -29,3 +107,4 @@ class PostDeleteAPIView(DestroyAPIView):
 class PostUpdateAPIView(UpdateAPIView):
     queryset = Post.objects.all()
     serializer_class = PostSerializer
+"""

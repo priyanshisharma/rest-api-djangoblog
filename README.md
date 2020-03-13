@@ -19,4 +19,7 @@ The following functions are performed
 Look into the API folder i.e. `../blog/api` to have a deeper understanding, and go to 
 
 * `'/post'` for Postlist
-* `../post/<post-id>` for to get,delete and update
+* `../post/<post-id>` for Post Detail
+* `../post/<post-id>/new` to create
+* `../post/<post-id>/remove` to delete
+* `../post/<post-id>/edit` to update

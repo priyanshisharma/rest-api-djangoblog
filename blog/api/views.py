@@ -41,16 +41,12 @@ def post_detail(request, pk):
     return Response(serializer.data)
 
 @api_view(['POST'])
-def create(request,pk):
-    try:
-        post = Post.objects.get(pk=pk)
-    except Post.DoesNotExist:
-        return HttpResponse(status=404)
+def create(request):
     data = JSONParser().parse(request)
-    serializer = PostSerializer(post,data=data)
+    serializer = PostSerializer(data=data)
     if serializer.is_valid():
         serializer.save()
-        return JsonResponse(serializer.data)
+        return JsonResponse(serializer.data , status = 201)
     return JsonResponse(serializer.errors, status=400)
 
 @api_view(['PUT'])

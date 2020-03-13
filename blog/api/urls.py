@@ -6,6 +6,9 @@ urlpatterns = [
    #path('about/',views.AboutView.as_view(),name='about'),
    path('post/', views.list),
    path('post/<int:pk>', views.post_detail),
+   path('post/<int:pk>/new', views.create),
+   path('post/<int:pk>/remove/', views.delete),
+   path('post/<int:pk>/edit/', views.update)
    # path('post/<int:pk>', views.PostDetailAPIView.as_view(), name='post_detail'),
 
     #path('post/new/', views.CreatePostAPIView.as_view(), name='post_new'),

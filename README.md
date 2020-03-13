@@ -20,6 +20,6 @@ Look into the API folder i.e. `../blog/api` to have a deeper understanding, and 
 
 * `'/post'` for Postlist
 * `../post/<post-id>` for Post Detail
-* `../post/<post-id>/new` to create
+* `../post/new` to create
 * `../post/<post-id>/remove` to delete
 * `../post/<post-id>/edit` to update

@@ -14,21 +14,12 @@ from rest_framework.response import Response
 from rest_framework.decorators import api_view
 from rest_framework import status
 
-@csrf_exempt
+@api_view(['GET'])
 def list(request):
     if request.method == 'GET':
         queryset = Post.objects.all()
         serializer = PostSerializer(queryset,many=True)
-        return JsonResponse(serializer.data , safe=False)
-
-    elif request.method == 'POST':
-        data = JSONParser().parse(request)
-        serializer = PostSerializer(data=data)
-        if serializer.is_valid():
-            serializer.save()
-            return JsonResponse(serializer.data, status=201)
-        return JsonResponse(serializer.errors, status=400)
-
+        return Response(serializer.data)
 
 @api_view(['GET'])
 def post_detail(request, pk):
@@ -46,7 +37,7 @@ def create(request):
     serializer = PostSerializer(data=data)
     if serializer.is_valid():
         serializer.save()
-        return JsonResponse(serializer.data , status = 201)
+        return Response(serializer.data)
     return JsonResponse(serializer.errors, status=400)
 
 @api_view(['PUT'])
@@ -72,6 +63,10 @@ def delete(request,pk):
     post.delete()
     return Response(status=status.HTTP_204_NO_CONTENT)
 
+
+class PostListAPIView(ListAPIView):
+    queryset = Post.objects.all()
+    serializer_class = PostSerializer
 
 
 

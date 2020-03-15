@@ -64,9 +64,7 @@ def delete(request,pk):
     return Response(status=status.HTTP_204_NO_CONTENT)
 
 
-class PostListAPIView(ListAPIView):
-    queryset = Post.objects.all()
-    serializer_class = PostSerializer
+
 
 
 

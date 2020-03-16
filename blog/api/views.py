@@ -38,7 +38,7 @@ def create(request):
     if serializer.is_valid():
         serializer.save()
         return Response(serializer.data)
-    return JsonResponse(serializer.errors, status=400)
+    return Response(serializer.errors, status=400)
 
 @api_view(['PUT'])
 def update(request,pk):
@@ -47,11 +47,11 @@ def update(request,pk):
     except Post.DoesNotExist:
         return HttpResponse(status=404)
     data = JSONParser().parse(request)
-    serializer = PostSerializer(post,data=data)
+    serializer = PostSerializer(post,data=data,partial=True)
     if serializer.is_valid():
         serializer.save()
-        return JsonResponse(serializer.data)
-    return JsonResponse(serializer.errors, status=400)
+        return Response(serializer.data)
+    return Response(serializer.errors, status=400)
 
 
 @api_view(['DELETE'])

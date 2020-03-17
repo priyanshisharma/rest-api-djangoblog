@@ -7,12 +7,20 @@ from rest_framework.generics import (
 )
 from blog.models import Post
 from .serializers import PostSerializer
-from django.http import JsonResponse , HttpResponse
 from django.views.decorators.csrf import csrf_exempt
 from rest_framework.parsers import JSONParser
 from rest_framework.response import Response
-from rest_framework.decorators import api_view
+from rest_framework.decorators import api_view, permission_classes
 from rest_framework import status
+from django.contrib.auth import authenticate
+from rest_framework.authtoken.models import Token
+from rest_framework.permissions import AllowAny
+from rest_framework.status import (
+    HTTP_400_BAD_REQUEST,
+    HTTP_404_NOT_FOUND,
+    HTTP_200_OK
+)
+from rest_framework.response import Response
 
 @api_view(['GET'])
 def list(request):
@@ -63,80 +71,19 @@ def delete(request,pk):
     post.delete()
     return Response(status=status.HTTP_204_NO_CONTENT)
 
-
-
-
-
-
-"""
 @csrf_exempt
-def post_detail(request, pk):
-"""
-    #Retrieve, update or delete a code snippet.
-   
-"""
-    try:
-        post = Post.objects.get(pk=pk)
-    except Post.DoesNotExist:
-        return HttpResponse(status=404)
-
-    if request.method == 'GET':
-        serializer = PostSerializer(post)
-        return JsonResponse(serializer.data)
-
-    elif request.method == 'PUT':
-        data = JSONParser().parse(request)
-        serializer = SnippetSerializer(post, data=data)
-        if serializer.is_valid():
-            serializer.save()
-            return JsonResponse(serializer.data)
-        return JsonResponse(serializer.errors, status=400)
-
-    elif request.method == 'DELETE':
-        post.delete()
-        return HttpResponse(status=204)
-
-
-try:
-        post = Post.objects.get(pk=pk)
-    except Post.DoesNotExist:
-        return Response(status=status.HTTP_404_NOT_FOUND)
-
-    if request.method == 'GET':
-        serializer = PostSerializer(post)
-        return Response(serializer.data)
-
-    elif request.method == 'PUT':
-        serializer = PostSerializer(post, data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-    elif request.method == 'DELETE':
-        post.delete()
-        return Response(status=status.HTTP_204_NO_CONTENT)
-"""
-"""
-class CreatePostAPIView(CreateAPIView):
-    queryset = Post.objects.all()
-    serializer_class = PostSerializer
-
-class PostListAPIView(ListAPIView):
-    queryset = Post.objects.all()
-    serializer_class = PostSerializer
-
-class PostDetailAPIView(RetrieveAPIView):
-    queryset = Post.objects.all()
-    serializer_class = PostSerializer
-"""
-
-"""
-class PostDeleteAPIView(DestroyAPIView):
-    queryset = Post.objects.all()
-    serializer_class = PostSerializer
-
-class PostUpdateAPIView(UpdateAPIView):
-    queryset = Post.objects.all()
-    serializer_class = PostSerializer
-"""
+@api_view(["POST"])
+@permission_classes((AllowAny,))
+def login(request):
+    username = request.data.get("username")
+    password = request.data.get("password")
+    if username is None or password is None:
+        return Response({'error': 'Please provide both username and password'},
+                        status=HTTP_400_BAD_REQUEST)
+    user = authenticate(username=username, password=password)
+    if not user:
+        return Response({'error': 'Invalid Credentials'},
+                        status=HTTP_404_NOT_FOUND)
+    token, _ = Token.objects.get_or_create(user=user)
+    return Response({'token': token.key},
+                    status=HTTP_200_OK)

@@ -41,11 +41,11 @@ def post_detail(request, pk):
 
 @api_view(['POST'])
 def create(request):
-    data = JSONParser().parse(request)
+    data = JSONParser().parse(request) #To be seen
     serializer = PostSerializer(data=data)
     if serializer.is_valid():
         serializer.save()
-        return Response(serializer.data)
+        return Response(serializer.data, status=201)
     return Response(serializer.errors, status=400)
 
 @api_view(['PUT'])
@@ -54,7 +54,7 @@ def update(request,pk):
         post = Post.objects.get(pk=pk)
     except Post.DoesNotExist:
         return HttpResponse(status=404)
-    data = JSONParser().parse(request)
+    data = JSONParser().parse(request) #To be seen
     serializer = PostSerializer(post,data=data,partial=True)
     if serializer.is_valid():
         serializer.save()
@@ -68,8 +68,12 @@ def delete(request,pk):
         post = Post.objects.get(pk=pk)
     except Post.DoesNotExist:
         return HttpResponse(status=404)
-    post.delete()
-    return Response(status=status.HTTP_204_NO_CONTENT)
+    operation = post.delete()
+    if operation:
+        data["success"] = "delete successful"
+    else:
+        data["failure"] = "delete failed"
+    return Response(data=data)
 
 @csrf_exempt
 @api_view(["POST"])

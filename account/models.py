@@ -22,6 +22,7 @@ class MyAccountManager(BaseUserManager):
 		user.save(using=self._db)
 		return user
 
+	
 	def create_superuser(self, email, username, password):
 		user  = self.create_user(
 				email=self.normalize_email(email),
@@ -33,7 +34,7 @@ class MyAccountManager(BaseUserManager):
 		user.is_superuser = True
 		user.save(using=self._db)
 		return user
-
+	
 
 
 class Account(AbstractBaseUser):
@@ -59,6 +60,8 @@ class Account(AbstractBaseUser):
         
     def has_module_perms(self, app_label):
         return True
+
+
 
 
 @receiver(post_save, sender = settings.AUTH_USER_MODEL)
